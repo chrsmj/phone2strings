@@ -38,7 +38,7 @@ set l_digits [split $s_phone {}]
 set i_len [llength $l_digits]
 
 # BEGIN FUN RECURSIVE ALGORITHM
-proc p2sRecursive {offset_ {s_ ""}} {
+proc p2sRecursive {{offset_ 0} {s_ ""}} {
     set l_strings [list]
     set l_chars [dict get $::d_keypad [lindex $::l_digits $offset_]]
     foreach c $l_chars {
@@ -55,7 +55,7 @@ proc p2sRecursive {offset_ {s_ ""}} {
 }
 # END FUN RECURSIVE ALGORITHM
 
-p2sRecursive 0 ""
+p2sRecursive
 exit
 
 
