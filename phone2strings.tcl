@@ -11,9 +11,6 @@ set unsafe_phone [string trim [lindex $argv 0]]
 # dictionary of numbers-to-letters as seen on phone key pad
 set d_keypad [dict create 0 {0} 1 {1} 2 {A B C} 3 {D E F} 4 {G H I} 5 {J K L} 6 {M N O} 7 {P Q R S} 8 {T U V} 9 {W X Y Z}]
 
-# where to store the results for display
-set l_outstrings [list]
-
 if { [string length $unsafe_phone] == 0 } {
     puts "Usage: tclsh phone2strings.tcl 7203242729"
     puts "(where 7203242729 is the number you want to map out)"
@@ -37,6 +34,36 @@ foreach s_maybedigit [split $unsafe_phone {}] {
 
 # now a safe clean phone number
 set s_phone $unsafe_phone
+set l_digits [split $s_phone {}]
+set i_len [llength $l_digits]
+
+# BEGIN FUN RECURSIVE ALGORITHM
+proc p2sRecursive {offset_ {s_ ""}} {
+    set l_strings [list]
+    set l_chars [dict get $::d_keypad [lindex $::l_digits $offset_]]
+    foreach c $l_chars {
+        lappend l_strings "${s_}${c}"
+    }
+    set offset [incr offset_]
+    foreach s $l_strings {
+        if { $offset < $::i_len } {
+            p2sRecursive $offset $s
+        } else {
+            puts $s
+        }
+    }
+}
+# END FUN RECURSIVE ALGORITHM
+
+p2sRecursive 0 ""
+exit
+
+
+# The earlier method (below) was non-recursive.
+# But it took 20-30% more CPU and orders of magnitude more RAM.
+
+# where to store the results for display (non-recursive mode)
+set l_outstrings [list]
 
 # BEGIN FUN ALGORITHM
 foreach s_digit [split $s_phone {}] {
